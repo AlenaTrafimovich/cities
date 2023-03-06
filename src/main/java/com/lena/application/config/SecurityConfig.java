@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .headers().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/user/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/user", "/user/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/city/**").permitAll()
                 .requestMatchers("/**").fullyAuthenticated()
                 .and()

@@ -92,7 +92,7 @@ class UserServiceImplTest {
     @Test
     void addUser_AlreadyExist_ReturnException() {
         UserAddRequest request = new UserAddRequest();
-        request.setUserName("admin");
+        request.setUsername("admin");
         request.setPassword("123");
 
         when(userRepository.findUserByUsername(any())).thenReturn(Optional.of(user));
@@ -106,7 +106,7 @@ class UserServiceImplTest {
     @Test
     void addUser_NotExist_ReturnUser() {
         UserAddRequest request = new UserAddRequest();
-        request.setUserName("admin");
+        request.setUsername("admin");
         request.setPassword("123");
 
         User expected = createUser(1L, "admin", "123");

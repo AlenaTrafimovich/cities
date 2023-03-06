@@ -40,11 +40,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addUser(UserAddRequest request) {
-        if (repository.findUserByUsername(request.getUserName()).isPresent()) {
+        if (repository.findUserByUsername(request.getUsername()).isPresent()) {
             throw new UserAlreadyExistException("User already exist");
         }
         User user = new User();
-        user.setUsername(request.getUserName());
+        user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
         return repository.save(user);
     }
