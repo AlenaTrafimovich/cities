@@ -5,22 +5,31 @@ spring:
 #    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     show-sql: true
+    defer-datasource-initialization: true
 
   datasource:
 #    driver-class-name: org.postgresql.Driver
     driver-class-name: org.h2.Driver
     username: sa
-    password: password
-    url: jdbc:h2:mem:testdb
-#    url: localhost:5432/test
+    password:
+    url: jdbc:h2:mem:cities
+
+  #    url: localhost:5432/test
   h2:
     console:
       enabled: true
-
+      path: /h2
+  sql:
+    init:
+      mode: always
 city:
   load-on-startup: true
   filename: "cities.csv"
+
 server:
   port: 8008
+logging:
+  level:
+    root: debug

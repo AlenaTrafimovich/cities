@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "cities")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -46,5 +48,29 @@ public class City {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        City city = (City) o;
+        return Objects.equals(id, city.id)
+                && Objects.equals(name, city.name)
+                && Objects.equals(photo, city.photo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, photo);
+    }
+
+    @Override
+    public String toString() {
+        return "City{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", photo='" + photo + '\'' +
+                '}';
     }
 }

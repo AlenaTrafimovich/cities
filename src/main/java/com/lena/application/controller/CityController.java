@@ -6,6 +6,7 @@ import com.lena.application.service.CityService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,10 +37,11 @@ public class CityController {
 
     @GetMapping("/{name}")
     public ResponseEntity<City> getCity(@PathVariable("name") String name) {
-        return new ResponseEntity<>(service.getCityByName(name), HttpStatus.OK);
+        return new ResponseEntity<>(service.getCity(name), HttpStatus.OK);
     }
 
     @PutMapping("/{name}")
+    @Secured("ROLE_ALLOW_EDIT")
     public ResponseEntity<City> editCity(@PathVariable("name") String name,
                                          @Valid @RequestBody CityEditRequest request) {
         return new ResponseEntity<>(service.editCity(name, request), HttpStatus.OK);

@@ -31,16 +31,20 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public City getCityByName(String name) {
+    public City getCity(String name) {
         return cityRepository.findCityByNameIgnoreCase(name)
                 .orElseThrow(() -> new ResourceNotFoundException("City with such name not found"));
     }
 
     @Override
     public City editCity(String name, CityEditRequest request) {
-        City city = getCityByName(name);
-        city.setName(request.getName());
-        city.setPhoto(request.getPhoto());
+        City city = getCity(name);
+        if (request.getName() != null) {
+            city.setName(request.getName());
+        }
+        if (request.getPhoto() != null) {
+            city.setPhoto(request.getPhoto());
+        }
         cityRepository.save(city);
         return city;
     }

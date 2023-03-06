@@ -12,9 +12,9 @@ public interface CityService {
 
     /**
      * Get list of all cities
-     * @param page the page of search
-     * @param pageSize the amount of elements on the page
      *
+     * @param page     the page of search
+     * @param pageSize the amount of elements on the page
      * @return list of all cities
      */
     List<City> getAllCities(int page, int pageSize);
@@ -25,7 +25,7 @@ public interface CityService {
      * @param name of the city
      * @return {@link City} information about the city
      */
-    City getCityByName(String name);
+    City getCity(String name);
 
     /**
      * Edit city
