@@ -9,13 +9,13 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Collections;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @ConditionalOnProperty(name = "city.load-on-startup")
@@ -37,16 +37,16 @@ public class CsvLoader {
 
     private List<City> getCitiesFromCsv() {
         String content;
-        try {
-            File file = ResourceUtils.getFile("classpath:" + filename);
-            content = Files.readString(file.toPath());
-            if (content != null) {
-                ObjectReader reader = csvMapper.readerFor(City.class)
-                        .with(csvMapper.schemaFor(City.class).withHeader());
-                MappingIterator<City> iterator = reader.readValues(content);
-                return iterator.readAll();
-            }
-            return Collections.emptyList();
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream(filename);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+
+            content = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+
+            ObjectReader objectReader = csvMapper.readerFor(City.class)
+                    .with(csvMapper.schemaFor(City.class).withHeader());
+
+            MappingIterator<City> iterator = objectReader.readValues(content);
+            return iterator.readAll();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

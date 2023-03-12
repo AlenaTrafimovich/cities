@@ -1,0 +1,15 @@
+version: "3.0"
+
+services:
+  city-app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: city-app:dev
+    container_name: city-app-dev
+    ports:
+      - "8008:8008"
+    networks:
+      default:
+        aliases:
+          - city-app

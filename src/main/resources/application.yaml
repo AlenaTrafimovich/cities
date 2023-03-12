@@ -32,4 +32,4 @@ server:
   port: 8008
 logging:
   level:
-    root: debug
+    root: info
