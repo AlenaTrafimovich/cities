@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +37,7 @@ public class CityController {
     @GetMapping
     @ApiResponses(value = {
             @ApiResponse(responseCode = StatusCode.OK, description = "OK",
-                    content = @Content(schema = @Schema(implementation = CityResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE))
+                    content = @Content(schema = @Schema(implementation = CityResponse.class)))
     })
     public ResponseEntity<List<CityResponse>> getAllCities(
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
@@ -49,22 +48,22 @@ public class CityController {
     @GetMapping(value = "/{name}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = StatusCode.OK, description = "OK",
-                    content = @Content(schema = @Schema(implementation = CityResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    content = @Content(schema = @Schema(implementation = CityResponse.class))),
             @ApiResponse(responseCode = StatusCode.NOT_FOUND, description = "The resource you were trying to reach is not found",
-                    content = @Content(schema = @Schema(implementation = String.class), mediaType = MediaType.TEXT_PLAIN_VALUE))
+                    content = @Content(schema = @Schema(implementation = String.class)))
     })
     public ResponseEntity<CityResponse> getCity(@PathVariable("name") String name) {
         return new ResponseEntity<>(service.getCityByName(name), HttpStatus.OK);
     }
 
-    @PutMapping(value = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{name}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = StatusCode.OK, description = "OK",
-                    content = @Content(schema = @Schema(implementation = CityResponse.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    content = @Content(schema = @Schema(implementation = CityResponse.class))),
             @ApiResponse(responseCode = StatusCode.BAD_REQUEST, description = "Received incorrect data",
-                    content = @Content(schema = @Schema(implementation = String.class), mediaType = MediaType.TEXT_PLAIN_VALUE)),
+                    content = @Content(schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = StatusCode.NOT_FOUND, description = "The resource you were trying to reach is not found",
-                    content = @Content(schema = @Schema(implementation = String.class), mediaType = MediaType.TEXT_PLAIN_VALUE))})
+                    content = @Content(schema = @Schema(implementation = String.class)))})
     public ResponseEntity<CityResponse> editCity(@PathVariable("name") String name,
                                                  @Valid @RequestBody CityEditRequest request) {
         return new ResponseEntity<>(service.editCity(name, request), HttpStatus.OK);
