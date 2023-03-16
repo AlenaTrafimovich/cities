@@ -1,7 +1,9 @@
 package com.lena.application.service.impl;
 
 import com.lena.application.controller.dto.CityEditRequest;
+import com.lena.application.controller.dto.CityResponse;
 import com.lena.application.exception.ResourceNotFoundException;
+import com.lena.application.mapper.CityMapperImpl;
 import com.lena.application.model.entity.City;
 import com.lena.application.repository.CityRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -30,21 +33,27 @@ class CityServiceImplTest {
     private CityRepository cityRepository;
     @InjectMocks
     private CityServiceImpl cityService;
+    @Spy
+    private CityMapperImpl cityMapper;
     private City city;
 
     @BeforeEach
     void init() {
-        city = createCity(1L, "Tokyo", "Photo_1");
+        city = City.builder()
+                .name("Tokyo")
+                .photo("Photo_1")
+                .build();
     }
 
     @Test
-    void getCity_cityExist_returnCity() {
-        City expected = createCity(1L, "Tokyo", "Photo_1");
+    void getCity_cityExist_returnCityResponse() {
+        CityResponse expectedCityResponse = createCityResponse("Tokyo", "Photo_1");
+
         when(cityRepository.findCityByNameIgnoreCase(any())).thenReturn(Optional.of(city));
 
-        var actualCity = cityService.getCity("tokyo");
+        var actualCityResponse = cityService.getCityByName("tokyo");
 
-        assertEquals(expected, actualCity);
+        assertEquals(expectedCityResponse, actualCityResponse);
 
         verify(cityRepository).findCityByNameIgnoreCase("tokyo");
     }
@@ -54,71 +63,116 @@ class CityServiceImplTest {
         when(cityRepository.findCityByNameIgnoreCase(any())).thenReturn(Optional.empty());
 
         var exception = assertThrows(ResourceNotFoundException.class, () ->
-                cityService.getCity("delhi"));
+                cityService.getCityByName("delhi"));
 
         assertEquals("City with such name not found", exception.getMessage());
     }
 
     @Test
     void editNameCity_correctData_updateCity() {
-        CityEditRequest request = new CityEditRequest();
-        request.setName("Berlin");
+        CityEditRequest request = CityEditRequest.builder()
+                .name("Berlin")
+                .build();
 
-        City expected = createCity(1L, "Berlin", "Photo_1");
+        City expectedCity = City.builder()
+                .name("Berlin")
+                .photo("Photo_1")
+                .build();
 
-        when(cityRepository.findCityByNameIgnoreCase(any())).thenReturn(Optional.of(city));
+        CityResponse expectedCityResponse = createCityResponse("Berlin", "Photo_1");
 
-        var actualCity = cityService.editCity(city.getName(), request);
+        when(cityRepository.findCityByNameIgnoreCase(any())).thenReturn(Optional.of(expectedCity));
+        when(cityRepository.save(any())).thenReturn(expectedCity);
 
-        verify(cityRepository).save(expected);
-        assertEquals(expected, actualCity);
+        var actualCityResponse = cityService.editCity(request.getName(), request);
+
+        verify(cityRepository).save(expectedCity);
+        assertEquals(expectedCityResponse, actualCityResponse);
     }
 
     @Test
     void editPhotoCity_correctData_updateCity() {
-        CityEditRequest request = new CityEditRequest();
-        request.setPhoto("NewPhoto");
+        CityEditRequest request = CityEditRequest.builder()
+                .photo("NewPhoto")
+                .build();
 
-        City expected = createCity(1L, "Tokyo", "NewPhoto");
+        City expectedCity = City.builder()
+                .name("Tokyo")
+                .photo("NewPhoto")
+                .build();
+
+        CityResponse expectedCityResponse = createCityResponse("Tokyo", "NewPhoto");
 
         when(cityRepository.findCityByNameIgnoreCase(any())).thenReturn(Optional.of(city));
+        when(cityRepository.save(any())).thenReturn(expectedCity);
 
-        var actualCity = cityService.editCity(city.getName(), request);
+        var actualCityResponse = cityService.editCity(request.getName(), request);
 
-        verify(cityRepository).save(expected);
-        assertEquals(expected, actualCity);
+        verify(cityRepository).save(expectedCity);
+        assertEquals(expectedCityResponse, actualCityResponse);
     }
 
     @Test
     void getAllCities_pageSizeLessZero_ReturnAll() {
-        List<City> cityList = List.of(city, createCity(2L, "Berlin", "Photo_2"));
+        City city1 = City.builder()
+                .name("Tokyo")
+                .photo("Photo_1")
+                .build();
 
-        when(cityRepository.findAll()).thenReturn(cityList);
+        City city2 = City.builder()
+                .name("Berlin")
+                .photo("Photo_2")
+                .build();
 
-        var actualList = cityService.getAllCities(1, -1);
+        List<City> cities = List.of(city1, city2);
 
-        assertEquals(cityList, actualList);
+        CityResponse cityResponse1 = createCityResponse("Tokyo", "Photo_1");
+        CityResponse cityResponse2 = createCityResponse("Berlin", "Photo_2");
+
+        List<CityResponse> expectedResponseList = List.of(cityResponse1, cityResponse2);
+
+        when(cityRepository.findAll()).thenReturn(cities);
+
+        var actualResponseList = cityService.getAllCities(1, -1);
+
+        assertEquals(expectedResponseList, actualResponseList);
+
         verify(cityRepository).findAll();
     }
 
     @Test
     void getAllCities_pageSizeZeroOrMoreThanZero_ReturnPage() {
         Pageable pageable = PageRequest.of(1, 1);
-        List<City> cities = List.of(city, createCity(2L, "Berlin", "Photo_2"));
+
+        City city1 = City.builder()
+                .name("Tokyo")
+                .photo("Photo_1")
+                .build();
+
+        City city2 = City.builder()
+                .name("Berlin")
+                .photo("Photo_2")
+                .build();
+
+        List<City> cities = List.of(city1, city2);
+
+        CityResponse cityResponse1 = createCityResponse("Tokyo", "Photo_1");
+        CityResponse cityResponse2 = createCityResponse("Berlin", "Photo_2");
+
+        List<CityResponse> expectedResponseList = List.of(cityResponse1, cityResponse2);
 
         when(cityRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(cities));
 
-        var actualList = cityService.getAllCities(2, 1);
+        var actualResponseList = cityService.getAllCities(2, 1);
 
-        assertEquals(cities, actualList);
+        assertEquals(expectedResponseList, actualResponseList);
         verify(cityRepository).findAll(pageable);
     }
 
-    private City createCity(Long id, String name, String photo) {
-        City city = new City();
-        city.setId(id);
-        city.setName(name);
-        city.setPhoto(photo);
-        return city;
+    private CityResponse createCityResponse(String name, String photo) {
+        return CityResponse.builder()
+                .name(name)
+                .photo(photo)
+                .build();
     }
 }

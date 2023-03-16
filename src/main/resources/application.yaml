@@ -1,31 +1,28 @@
 spring:
   jpa:
-    database: h2
-    database-platform: org.hibernate.dialect.H2Dialect
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     show-sql: true
-    defer-datasource-initialization: true
 
-  datasource:
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-    url: jdbc:h2:mem:cities
-
-  h2:
-    console:
-      enabled: true
-      path: /h2
-  sql:
-    init:
-      mode: always
-city:
-  load-on-startup: true
-  filename: "cities.csv"
+  liquibase:
+    enabled: true
+    change-log: /data/changelog/db.changelog.yaml
+    url: ${spring.datasource.url}
+    database-change-log-table: schema_history
+    database-change-log-lock-table: schema_lock_history
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
 
 server:
   port: 8008
 logging:
   level:
     root: info
+
+springdoc:
+  api-docs:
+    version: openapi_3_0
+  swagger-ui:
+    path: /swagger

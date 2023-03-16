@@ -1,7 +1,7 @@
 package com.lena.application.service;
 
 import com.lena.application.controller.dto.CityEditRequest;
-import com.lena.application.model.entity.City;
+import com.lena.application.controller.dto.CityResponse;
 
 import java.util.List;
 
@@ -17,22 +17,22 @@ public interface CityService {
      * @param pageSize the amount of elements on the page
      * @return list of all cities
      */
-    List<City> getAllCities(int page, int pageSize);
+    List<CityResponse> getAllCities(int page, int pageSize);
 
     /**
      * Get city by name
      *
      * @param name of the city
-     * @return {@link City} information about the city
+     * @return {@link CityResponse} information about the city
      */
-    City getCity(String name);
+    CityResponse getCityByName(String name);
 
     /**
      * Edit city
      *
      * @param name    of the city
      * @param request data to update
-     * @return {@link City} information about the city
+     * @return {@link CityResponse} information about the city
      */
-    City editCity(String name, CityEditRequest request);
+    CityResponse editCity(String name, CityEditRequest request);
 }

@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Liquibase
+      changes:
+        - createTable:
+            tableName: "CITIES"
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  constraints:
+                    primaryKey:true
+                    nullable:false
+                    tableName:cities
+              - column:
+                  name: name
+                  type: VARCHAR
+                  constraints:
+                    primaryKey:false
+                    nullable:false
+                    tableName:cities
+              - column:
+                  name: photo
+                  type: VARCHAR
+                  constraints:
+                    primaryKey:false
+                    nullable:false
+                    tableName:cities
+  - changeSet:
+      id: 2
+      author: Liquibase
+      changes:
+        - loadData:
+            file: "cities.csv"
+            encoding: UTF-8
+            separator: ","
+            schemaName: "public"
+            tableName: "CITIES"

@@ -1,6 +1,17 @@
 version: "3.0"
 
 services:
+  city-db:
+    image: postgres:latest
+    container_name: city-db
+    environment:
+      - POSTGRES_DB=city
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD=password
+    restart: always
+    ports:
+      - 5432:5432
+
   city-app:
     build:
       context: ./
