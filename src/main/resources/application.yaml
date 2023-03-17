@@ -6,6 +6,11 @@ spring:
       ddl-auto: none
     show-sql: true
 
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: sa
+    password: password
+
   liquibase:
     enabled: true
     change-log: /data/changelog/db.changelog.yaml

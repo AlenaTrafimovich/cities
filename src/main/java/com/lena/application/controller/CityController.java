@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @Validated
 @RestController
 @RequestMapping("/cities")
@@ -66,6 +68,7 @@ public class CityController {
                     content = @Content(schema = @Schema(implementation = String.class)))})
     public ResponseEntity<CityResponse> editCity(@PathVariable("name") String name,
                                                  @Valid @RequestBody CityEditRequest request) {
+        log.info("Updating city {} with values {}", name, request);
         return new ResponseEntity<>(service.editCity(name, request), HttpStatus.OK);
     }
 }

@@ -7,8 +7,7 @@ import com.lena.application.mapper.CityMapper;
 import com.lena.application.model.entity.City;
 import com.lena.application.repository.CityRepository;
 import com.lena.application.service.CityService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +17,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class CityServiceImpl implements CityService {
     private final CityRepository cityRepository;
     private final CityMapper cityMapper;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CityService.class);
 
     public CityServiceImpl(CityRepository cityRepository, CityMapper cityMapper) {
         this.cityRepository = cityRepository;
@@ -55,17 +54,16 @@ public class CityServiceImpl implements CityService {
         if (request.getPhoto() != null) {
             city.setPhoto(request.getPhoto());
         }
-        LOGGER.info("Updating city {} with values {}", name, city);
         try {
             cityRepository.save(city);
         } catch (Exception e) {
-            LOGGER.error("Unexpected exception while trying to update city {}", city, e);
+            log.error("Unexpected exception while trying to update city {}", city, e);
         }
         return cityMapper.toCityResponse(city);
     }
 
     private City getCity(String name) {
-        LOGGER.info("Fetching city by name {}", name);
+        log.info("Fetching city by name {}", name);
         return cityRepository.findCityByNameIgnoreCase(name)
                 .orElseThrow(() -> new ResourceNotFoundException("City with such name not found"));
     }
